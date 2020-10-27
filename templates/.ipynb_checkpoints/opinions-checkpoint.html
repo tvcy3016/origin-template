@@ -1,0 +1,83 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">  
+<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+<title>陽明大學圖書館::QA系統</title>
+<style>
+a:hover {color: #F93;}
+a {text-decoration: none;}
+</style>
+</head>
+   <body>
+        <div class="container">
+          <div class="jumbotron">
+            {{ _("output csv:") }}<form method="GET" action="/csvexport" class="form-inline" role="form">
+                {{ form.hidden_tag() }}
+                <p>{{ form.query1(class="form-control form-control-sm") }} {{ form.query2(class="form-control form-control-sm") }} {{ form.submit(value="明細與問題類型統計報表匯出") }}(下載後用openoffice開再轉)</p>
+            </form><br>
+            {{ _("search:") }}<form method="GET" action="/search" class="form-inline" role="form">
+                {{ sform.hidden_tag() }}
+                <p>{{ sform.q(class="form-control form-control-sm") }} {{ sform.submit(value="關鍵字搜尋") }}</p>
+            </form>
+            <div class="alert alert-danger">
+                ｜ <a href="/opinions/new">{{ _("add data") }}</a>｜ <a href="/logout">{{ _("login out") }}</a>｜
+            </div>
+            <b>::管理者:所有列表</b>
+            <br>共 {{ rownum }} 筆資料，目前在第 {{ page }} 頁
+            <br>最前頁 上一頁 1 <a href="/opinions?page=2" rel="next">2</a> 3 4 5 6 7 8 9 10 下一頁 最後頁
+              <table border='1'>
+                 <thead style="background-color: bisque;">
+                    <tr>
+                        <th scope="col">姓名</th>
+                        <th scope="col" style="width: 10%;">部門/單位</th>
+                        <th scope="col" rowspan="2" style="width: 10%;border-bottom: black solid;">意見主旨</th>
+                        <th scope="col">收件日期</th>
+                        <th scope="col" rowspan="2" style="border-bottom: black solid;">處理天數</th>
+                        <th scope="col" rowspan="2" colspan="3" style="border-bottom: black solid;">狀態/結案組別</th>
+                        <th scope="col" rowspan="2" style="border-bottom: black solid;">公開</th>
+                    </tr>
+                    <tr style="border-bottom: black solid;">
+                    <th scope="col">聯絡電話</th>
+                    <th scope="col">E-mail</th>
+                    <th scope="col">回覆日期</th>
+                    </tr>
+                 </thead>
+                 <tbody style="background-color: floralwhite;font-size: smaller;">
+                 {% for row in rows %}
+                    
+                    <tr>
+                       <td>{{ row[1] }}</td>
+                       <td>{{ row[2] }}</td>
+                       <td rowspan="2" style="border-bottom: black solid;">{{ row[5] }}</td>       
+                       <td>{{ row[7].split(' ')[0] }}</td>       
+                       <td rowspan="2" style="border-bottom: black solid;">{{day_num_list[loop.index-1]}}</td>           
+                       {% if row[12] == 1 %}
+                           <td colspan="3">已結案</td>       
+                       {% else %}
+                           <td colspan="3"><b><font style="color:red;">未結案</font> / {{ department_list[loop.index-1] }}</b></td>       
+                       {% endif %}
+                       <td rowspan="2" style="border-bottom: black solid;">{{ row[69] }}</td>       
+                    </tr>
+                    <tr style="border-bottom: black solid;">
+                        <td>{{ row[4] }}</td>
+                        <td>{{ row[3] }}</td>
+                        {% if row[7] == row[8] %}
+                            <td><b><font style="color:red;">未回覆</font></b></td>
+                        {% else %}
+                            <td>{{ row[8].split(' ')[0] }}</td>
+                        {% endif %}
+                        <td><a href="/opinions/{{ row[0] }}">顯示</a></td>
+                        <td><a href="/opinions/{{ row[0] }}/edit">編輯</a></td>
+                        <td><a href="/opinions/{{ row[0] }}" onclick="if (confirm('確定刪除嗎?')) { var f = document.createElement('form'); f.style.display = 'none'; this.parentNode.appendChild(f); f.method = 'POST'; f.action = this.href;var m = document.createElement('input'); m.setAttribute('type', 'hidden'); m.setAttribute('name', '_method'); m.setAttribute('value', 'delete'); f.appendChild(m);f.submit(); };return false;">刪除</a></td>
+                    </tr>
+                 {% endfor %}   
+                 </tbody>
+              </table>
+          </div>
+        </div>
+   </body>
+</html>
+
+

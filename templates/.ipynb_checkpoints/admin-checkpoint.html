@@ -1,0 +1,37 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">  
+<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+<title>金額分攤管理系統</title>
+</head>
+   <body>
+        <div class="container">
+          <div class="jumbotron">
+            <h1>金額分攤管理系統<br><small class="text-muted">乖乖填好算錢就容易唷！</small></h1>
+            <form method="POST" action="/check_meal" class="form-horizontal" role="form">
+                {{ form.hidden_tag() }}
+                <p>{{ form.username.label }} {{ form.username(class="form-control") }}
+                    {% if form.username.errors %}
+                        {% for error in form.username.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    {% endif %}
+                    </p>
+
+                <p>{{ form.meallist.label }}<font color="red">如果你能記得自己吃什麼就不用填該欄位！</font> {{ form.meallist(class="form-control") }}</p>
+                <p>{{ form.price.label }} {{ form.price(class="form-control") }}</p>
+                <div class="radio">
+                    {{ form.tip.label }} {{ form.tip }}
+                </div>
+                <p>{{ form.submit(value="送出確認",class="form-control") }}</p>
+            </form>
+
+
+              <a href = "/check_meal" class="text-decoration-none">查看結果</a>
+          </div>
+        </div>
+
+   </body>
+</html>
